@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0 — setup preview
+
+- Single Windows setup executable with runtime and receiver-driver checks.
+- Download missing .NET Framework or Zadig from official sources, with publisher verification and a pinned Zadig checksum.
+- Guided WinUSB association for control interface 03, followed by verification before installation.
+- Per-user application installation, Desktop and Start menu shortcuts, optional startup and registered uninstaller.
+- Preserve local settings during upgrades and removal.
+
 ## 0.2.0 — development preview
 
 - Minimal dashboard with connection status, battery and volume cards, output selectors and an automatic-routing toggle.

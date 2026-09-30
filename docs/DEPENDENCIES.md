@@ -20,6 +20,6 @@ The default source build uses the framework compiler. MSBuild also requires .NET
 - `scripts/CreateDesktopLauncher.ps1` and `scripts/PulseLauncher.cs`: generate the personalized Desktop executable.
 - `assets/`, example settings, README, installation/protocol/validation documents, license and third-party references.
 
-The application relies on Windows-provided APIs and framework libraries. Zadig, its GPL/LGPL components, the .NET installer and machine-specific driver packages are not redistributed. Official links above provide those external prerequisites. See [Third-party references](../THIRD_PARTY_NOTICES.md).
+The application relies on Windows-provided APIs and framework libraries. The setup assistant includes the application and documentation. It downloads the official Microsoft runtime or Zadig only when needed, verifies their publisher signatures, and additionally verifies the pinned Zadig SHA-256 checksum. Zadig, its GPL/LGPL components, the .NET installer and machine-specific driver packages are not redistributed. See [Setup assistant](SETUP.md) and [Third-party references](../THIRD_PARTY_NOTICES.md).
 
 Local settings, logs, personalized launchers and generated driver packages must not be committed to Git.

@@ -24,6 +24,10 @@ Turn the headset on to send audio to it. Turn it off, or unplug the receiver, to
 
 ### Requirements and installation
 
+**Recommended:** download `PulseAutoSwitch-Setup-0.3.0-win-x64.exe` from [Releases](https://github.com/higorrfa/pulse-autoswitch/releases), connect your receiver and run the assistant. It installs the app and shortcuts, checks requirements and downloads missing components. If WinUSB is missing, the assistant opens Zadig: select **USB ID `054C / 0D5E / 03`**, choose **WinUSB**, click **Replace Driver**, then close Zadig. Administrator approval is needed for driver/runtime installation. Internet access is needed only for missing prerequisites. See [Setup assistant](docs/SETUP.md).
+
+The following steps remain available for the portable ZIP:
+
 Use 64-bit Windows, .NET Framework 4.8 or later, and a PULSE 3D receiver **VID `054C`, PID `0D5E`, interface `MI_03`**. Installation scripts require PowerShell 5.1 or later. PULSE Elite and PlayStation Link are not supported.
 
 1. Extract the entire preview ZIP to a permanent, writable folder.
@@ -92,6 +96,10 @@ Ligue o fone para enviar o áudio para ele. Desligue o fone ou retire o dongle p
 - Atalhos experimentais CHAT / GAME, limitados pelo balanço do próprio fone.
 
 ### Requisitos e instalação
+
+**Recomendado:** baixe `PulseAutoSwitch-Setup-0.3.0-win-x64.exe` em [Releases](https://github.com/higorrfa/pulse-autoswitch/releases), conecte o dongle e execute o assistente. Ele instala o aplicativo e os atalhos, verifica os requisitos e baixa os componentes que faltarem. Se WinUSB não estiver configurado, ele abre o Zadig: selecione **USB ID `054C / 0D5E / 03`**, escolha **WinUSB**, clique em **Replace Driver** e feche o Zadig. Driver e runtime exigem aprovação de administrador. A internet é necessária apenas para baixar requisitos ausentes. Consulte [Setup assistant](docs/SETUP.md).
+
+As etapas abaixo continuam disponíveis para o ZIP portátil:
 
 Use Windows de 64 bits, .NET Framework 4.8 ou mais recente e o dongle PULSE 3D **VID `054C`, PID `0D5E`, interface `MI_03`**. Os scripts exigem PowerShell 5.1 ou mais recente. PULSE Elite e PlayStation Link não são suportados.
 

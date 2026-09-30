@@ -21,3 +21,22 @@ jobs:
       - name: Test protocol
         shell: pwsh
         run: ./scripts/Test.ps1
+      - name: Test setup requirements
+        shell: powershell
+        run: ./scripts/TestSetup.ps1
+      - name: Build installer
+        shell: powershell
+        run: |
+          $download = Join-Path $env:RUNNER_TEMP 'innosetup.exe'
+          Invoke-WebRequest -Uri 'https://github.com/jrsoftware/issrc/releases/download/is-6_7_3/innosetup-6.7.3.exe' -OutFile $download -UseBasicParsing
+          if ((Get-FileHash $download).Hash -ne '9C73C3BAE7ED48D44112A0F48E66742C00090BDB5BEF71D9D3C056C66E97B732') { throw 'Inno Setup checksum mismatch.' }
+          $signature = Get-AuthenticodeSignature $download
+          if ($signature.Status -ne 'Valid' -or $signature.SignerCertificate.Subject -notmatch 'O=Pyrsys B.V.') { throw 'Inno Setup publisher verification failed.' }
+          $compilerDirectory = Join-Path $env:RUNNER_TEMP 'inno'
+          $process = Start-Process $download -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/CURRENTUSER',('/DIR="'+$compilerDirectory+'"')) -WindowStyle Hidden -Wait -PassThru
+          if ($process.ExitCode -ne 0) { throw 'Inno Setup installation failed.' }
+          ./scripts/BuildInstaller.ps1 -Compiler (Join-Path $compilerDirectory 'ISCC.exe')
+      - uses: actions/upload-artifact@v7.0.1
+        with:
+          name: PulseAutoSwitch-win-x64
+          path: dist/*

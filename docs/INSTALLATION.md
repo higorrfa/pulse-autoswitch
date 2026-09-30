@@ -1,5 +1,9 @@
 # Installation and removal
 
+## Recommended: setup assistant
+
+Run `PulseAutoSwitch-Setup-0.3.0-win-x64.exe` from [Releases](https://github.com/higorrfa/pulse-autoswitch/releases). The assistant checks prerequisites, guides driver association when needed, installs into a per-user directory and registers an uninstaller. See [Setup assistant](SETUP.md). The sections below describe the alternative portable ZIP installation.
+
 ## Prepare Windows and the package
 
 Use 64-bit Windows and [.NET Framework 4.8 or later](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48). Install the Microsoft runtime if missing. PowerShell 5.1 or later is required for scripts. Desktop launcher generation uses the framework C# compiler.
