@@ -97,3 +97,15 @@ This test did not reveal stalled transfers, a required buffer size, oversized in
 Source comparisons inspected HeadsetControl commit `25dadae5c5b834f94ee954513421def12c5d6305` and the [Gold/Platinum Linux driver](https://github.com/counter185/hid-playstation-headset) commit `56e02eefd52e6ac72d3511d8d1aa67735e84b0ce`. HeadsetControl has no PULSE 3D implementation; its INZONE H5 uses different report IDs and a vendor HCI envelope. The Gold/Platinum driver reads B0 but supplies no balance setter. [PlayStation Link research](https://github.com/Jprnp/pslink-dossier) describes a different receiver and 64-byte B0 / D0 controls; those writes were not applied to this PULSE 3D.
 
 Decision: automatic balance recentering, including a return to 90%, is excluded from the current preview. Existing experimental shortcuts still work only when physical balance changes. Revisit this only with a verified PULSE 3D command or an independent event source. Research executables and speculative writes are excluded from the package and production code.
+
+### Explicit 100-to-90 test
+
+The operator set GAME to its limit and confirmed a 100% balance before the test. Four consecutive B0 reads verified the initial state `B0 04 64 64 ED 13 11 50`. The application was paused throughout the writes and restarted afterwards.
+
+| Candidate command, target decimal 90 | USB result | Twelve subsequent reads at 250 ms intervals |
+| --- | --- | --- |
+| SET_REPORT Feature B1 (`wValue 03B1`), payload `B1 5A` | Accepted, 2 bytes transferred | Balance remained 100% |
+| SET_REPORT Output B1 (`wValue 02B1`), payload `B1 5A` | Rejected, error 31 | Balance remained 100% |
+| SET_REPORT Input B0 (`wValue 01B0`), connected snapshot with byte 2 set to `5A` | Rejected, error 31 | Balance remained 100% |
+
+All 36 post-write status reads matched the original eight-byte state, including connection, microphone mute, battery and hardware volume. This specifically tests a target of 90%, unlike the earlier attempts targeting 50%. No functional balance adjustment command was established.
