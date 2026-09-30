@@ -55,3 +55,24 @@ In the physical test on 2026-09-30, GAME at maximum, CHAT presses and OFF/MONITO
 `SendInput` sends supported Windows media keys. Initialization, reconnection, battery updates, mute and volume changes must not trigger track commands.
 
 References are listed in [Third-party references](../THIRD_PARTY_NOTICES.md).
+
+## Automatic balance recentering investigation
+
+The HID descriptor declares vendor output report `B1` with one 8-bit payload byte. Its meaning is unknown; the descriptor alone does not establish a writable balance control.
+
+Isolated USB tests on 2026-09-30 paused the application and restarted it afterwards. Only the scratch research tools sent writes; the distributed application remains read-only.
+
+| Request on interface 03 | Result | Observed balance |
+| --- | --- | --- |
+| GET_REPORT Output B1 | Rejected, Windows error 31 | Unchanged |
+| SET_REPORT Output B1, payload `B1 32` | Rejected, error 31 | 100 before and after |
+| SET_REPORT Output B1, payload `32` | Rejected, error 31 | 90 before and after |
+| SET_REPORT Feature B1, payload `B1 32` | Accepted, 2 bytes transferred | 90 before and after |
+| SET_REPORT Feature B1, payload `32` | Rejected, error 31 | 90 before and after |
+| SET_REPORT Feature B0, valid connected snapshot with only byte 2 changed to 50 | Rejected, error 31 | 90 before and after |
+
+Here `32` is hexadecimal for decimal 50. Eight reads at 250 ms intervals followed each write. The change from 100 to 90 occurred between tests, before the second write, and cannot be attributed to a command. Accepted USB transfer status is insufficient to validate a command: the Feature B1 test did not recenter the balance.
+
+GET_REPORT Feature B1 returned a truncated B0 response, while Feature A0 returned a B0 header with unrelated trailing bytes. These mismatched responses were discarded as evidence of their requested report semantics.
+
+Automatic recentering is not implemented. Further work needs a verified command or independent button events, ideally from a captured console USB session. A software-only change to the decoder baseline cannot change the physical balance or recover presses at a saturated limit. The independent [PULSE 3D telemetry implementation](https://github.com/promanski/pulse3d-ksystemstats) also provides read-only status access.
