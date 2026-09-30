@@ -76,3 +76,24 @@ Here `32` is hexadecimal for decimal 50. Eight reads at 250 ms intervals followe
 GET_REPORT Feature B1 returned a truncated B0 response, while Feature A0 returned a B0 header with unrelated trailing bytes. These mismatched responses were discarded as evidence of their requested report semantics.
 
 Automatic recentering is not implemented. Further work needs a verified command or independent button events, ideally from a captured console USB session. A software-only change to the decoder baseline cannot change the physical balance or recover presses at a saturated limit. The independent [PULSE 3D telemetry implementation](https://github.com/promanski/pulse3d-ksystemstats) also provides read-only status access.
+
+### Follow-up transport investigation
+
+The complete 324-byte configuration descriptor was read from this receiver. It contains four interfaces: audio control 0, microphone streaming 1, speaker streaming 2, and HID 3. The audio control topology has input/output terminals and Feature Units 2 and 3. Both advertise master control bitmap `03`, meaning mute and volume according to [USB Audio Class 1.0](https://www.usb.org/sites/default/files/audio10.pdf). There is no declared Mixer, Selector, Processing or Extension Unit, and no separate standard game/chat control. This rules out an advertised USB Audio mixer control as the recentering mechanism; it does not rule out an undocumented vendor command.
+
+The HID interface has only interrupt IN `83`, maximum packet size 32. GET_PROTOCOL, GET_IDLE for B0, GET_REPORT Input 01 with its full five-byte length, and GET_REPORT Input B0 with its eight-byte length were rejected with error 31. SET_IDLE for B0 with a four-millisecond duration was also rejected. Rejection of optional HID requests alone is not proof of a device fault.
+
+A separate 45-second diagnostic set a 20 ms interrupt timeout and alternated buffer sizes, preserving the exact WinUSB error instead of collapsing all failures to a null reading. The operator exercised both buttons through the full balance range. B0 reads showed changes up to 100 and down to 0. The interrupt endpoint produced zero packets:
+
+| Requested buffer | Attempts | Result |
+| --- | --- | --- |
+| 8 bytes | 363 | Timeout, Windows error 121 |
+| 32 bytes | 362 | Timeout, error 121 |
+| 64 bytes | 362 | Timeout, error 121 |
+| 256 bytes | 362 | Timeout, error 121 |
+
+This test did not reveal stalled transfers, a required buffer size, oversized input packets, or independent limit-press events. It cannot establish how every firmware version behaves.
+
+Source comparisons inspected HeadsetControl commit `25dadae5c5b834f94ee954513421def12c5d6305` and the [Gold/Platinum Linux driver](https://github.com/counter185/hid-playstation-headset) commit `56e02eefd52e6ac72d3511d8d1aa67735e84b0ce`. HeadsetControl has no PULSE 3D implementation; its INZONE H5 uses different report IDs and a vendor HCI envelope. The Gold/Platinum driver reads B0 but supplies no balance setter. [PlayStation Link research](https://github.com/Jprnp/pslink-dossier) describes a different receiver and 64-byte B0 / D0 controls; those writes were not applied to this PULSE 3D.
+
+Decision: automatic balance recentering, including a return to 90%, is excluded from the current preview. Existing experimental shortcuts still work only when physical balance changes. Revisit this only with a verified PULSE 3D command or an independent event source. Research executables and speculative writes are excluded from the package and production code.
