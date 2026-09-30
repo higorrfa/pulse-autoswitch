@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PulseSettings>
+  <Enabled>false</Enabled>
+  <ShowBattery>true</ShowBattery>
+  <MediaButtons>false</MediaButtons>
+  <HeadsetId />
+  <MonitorId />
+  <LinkByte>4</LinkByte>
+  <LinkMask>4</LinkMask>
+  <OnValue>4</OnValue>
+  <OffValue>0</OffValue>
+</PulseSettings>
