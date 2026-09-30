@@ -109,3 +109,11 @@ The operator set GAME to its limit and confirmed a 100% balance before the test.
 | SET_REPORT Input B0 (`wValue 01B0`), connected snapshot with byte 2 set to `5A` | Rejected, error 31 | Balance remained 100% |
 
 All 36 post-write status reads matched the original eight-byte state, including connection, microphone mute, battery and hardware volume. This specifically tests a target of 90%, unlike the earlier attempts targeting 50%. No functional balance adjustment command was established.
+
+### Public balance command found for INZONE, not verified for PULSE 3D
+
+The follow-up public-source search inspected [OpenInzone](https://github.com/penguinwokrs/openinzone) commit `167108990aa674a57a5ba8a6d288d7d4383253b8`. Its [protocol documentation](https://github.com/penguinwokrs/openinzone/blob/main/docs/PROTOCOL.md) describes a hardware-verified game/chat balance setter for INZONE Buds (`054C:0EC2`): event ID `22`, event type `02` (SET), and one parameter byte from 0 to 100. This is embedded in a Sony vendor HCI packet, with transaction ID and checksum, inside 64-byte HID report `02` on usage page `FF04`.
+
+The PULSE 3D descriptor read from this receiver has no corresponding `FF04` control collection or report `02`. The INZONE driver product IDs listed by that project also exclude `0D5E`. Therefore this discovery establishes a writable balance mechanism for a different Sony family, but supplies no verified transport or command for this PULSE 3D. The INZONE command was not sent to the receiver, and no GPL code was copied into this project.
+
+The PULSE-specific telemetry project, Gold/Platinum driver, HeadsetControl and PlayStation Link research did not supply a validated PULSE 3D balance setter. This search result does not prove that the firmware lacks one. Further progress requires evidence of a PULSE-compatible command or a capture showing an original host changing its balance. The distributed application continues to read actual balance and cannot restore it from 100 to 90 by changing a software baseline.
